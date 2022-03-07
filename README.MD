@@ -26,9 +26,25 @@ Task | (1:1 reservation for a container)
 Container | A container as known on from the docker base level
 
 ## Commands
+
+### Deploy and Undeploy
 Deploying a sample application (as a stack) in the swarm:
 ```
 docker stack deploy -c docker-compose.yml example_app
+```
+
+To update simply redeploy.
+
+To undeploy
+```
+docker stack rm example_app
+```
+
+### List entities
+
+List all nodes (from manager node)
+```
+docker node ls
 ```
 
 List deployed applications (as stacks) in the swarm:
@@ -41,11 +57,6 @@ List the services in a particular stack
 docker stack services example_app
 ```
 
-To scale a particular serivce (use the name provided by the command above).
-```
-docker service scale example_app_my-nginx=4
-```
-
 List all services deployed with swarm
 ```
 docker service ls
@@ -56,14 +67,15 @@ List the tasks (1:1 container reservations) of a stack
 docker stack ps example_app
 ```
 
-List all nodes (from manager node)
+### Scale a service at Runtime
+
+To scale a particular serivce (use the name provided by the command `docker service ls`).
 ```
-docker node ls
+docker service scale example_app_my-nginx=4
 ```
 
 
-
-## Leaving the Swarm
+### Leaving the Swarm
 ```
 docker swarm leave -f
 ```
@@ -77,16 +89,27 @@ This will remove everything deployed.
 ```
 version: '3'
 services:
-    my-nginx:
-        image: nginx:latest
-        ports:
-        	- "80:80"
-        deploy:
-            resources:
-                reservations:
-                    memory: 100m
-				limits:
-                    memory: 300m
+  my-nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    networks:
+      - mynet
+    deploy:
+      # replicas: 2
+      resources:
+        reservations:
+          memory: 100m
+        limits:
+          memory: 300m
+      restart_policy:
+        condition: any
+      # update_config:
+      #   parallelism: 2
+      #   delay: 10s
+
+networks:
+  mynet:
 ```
 
 
