@@ -1,0 +1,20 @@
+version: '3'
+services:
+  my-nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - mynet
+    deploy:
+      # replicas: 2
+      resources:
+        reservations:
+          memory: 100m
+        limits:
+          memory: 300m
+      restart_policy:
+        condition: any
+
+networks:
+  mynet:
