@@ -3,7 +3,7 @@ services:
   my-nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - mynet
     deploy:
@@ -15,6 +15,9 @@ services:
           memory: 300m
       restart_policy:
         condition: any
+      # update_config:
+      #   parallelism: 2
+      #   delay: 10s
 
 networks:
   mynet:
